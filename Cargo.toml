@@ -1,0 +1,10 @@
+[package]
+name = "glassfish_mc"
+version = "0.1.0"
+edition = "2021"
+authors = ["Sullivan Bognar"]
+
+[dependencies]
+log = "0.4.14"
+fern = "0.6.0"
+toml = "0.5.8"
