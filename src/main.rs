@@ -2,9 +2,11 @@ use std::env;
 use std::process::exit;
 
 use fern::colors::Color;
+use git_version::git_version;
 use log::{debug, error, info};
 
 use crate::server::data_manager::config_manager::Config;
+use crate::server::Server;
 
 mod server;
 
@@ -43,13 +45,10 @@ fn main() {
     info!("Config loaded and logging enabled with level {}", level);
 
     std::panic::set_hook(Box::new(|panic_info| {
-        error!("Unknown Error, please report as an issue on GitHub: '{}:v_{}'", panic_info.to_string(), VERSION);
+        error!("Unknown Error, please report as an issue on GitHub: '{}:v_{},gh={}'", panic_info.to_string(), VERSION, git_version!());
     }));
 
-    let plugin_manager = server::plugin_manager::PluginManager::new();
-    info!("Plugin manager initialized, {} plugins found", 0);
-
-    let mut server = server::Server::new(config, plugin_manager);
+    let mut server = Server::new(config);
     server.start();
 }
 
