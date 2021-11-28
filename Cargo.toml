@@ -10,3 +10,5 @@ fern = { version = "0.6.0", features = ["colored"] }
 toml = "0.5.8"
 chrono = "0.4.19"
 serde = { version = "1.0.130", features = ["derive"] }
+libloading = "0.7.2"
+git-version = "0.3.5"
