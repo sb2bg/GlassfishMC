@@ -12,17 +12,22 @@ pub mod packet;
 pub mod plugin_manager;
 pub mod data_manager;
 mod tick_loop;
+mod exit_with_err;
+
+const VERSION: &str = "1.17.1";
+const PROTOCOL_VERSION: u32 = 756;
+const DATA_VERSION: u32 = 2730;
 
 pub struct Server {
     config: Config,
-    plugin_manager: PluginManager,
     start_time: Instant,
+    plugin_manager: PluginManager,
     tps: f32,
 }
 
 impl Server {
-    pub fn new(config: Config, plugin_manager: PluginManager) -> Self {
-        Self { config, plugin_manager, tps: 0.0, start_time: Instant::now() }
+    pub fn new(config: Config) -> Self {
+        Self { config, tps: 0.0, start_time: Instant::now(), plugin_manager: PluginManager::new() }
     }
 
     pub fn start(&mut self) {
@@ -30,7 +35,11 @@ impl Server {
         let port = self.config.get_port();
         let cores = if self.config.get_multi_threaded() { self.config.get_max_threads() } else { 1 };
 
+        info!("Version {}, Protocol {}, Data {}", VERSION, PROTOCOL_VERSION, DATA_VERSION);
         info!("Starting server on {}:{} with {} core(s) and {} tick rate", host, port, cores, self.config.get_tick_rate());
+
+        self.plugin_manager.load_plugins();
+
         self.tick_loop();
     }
 
