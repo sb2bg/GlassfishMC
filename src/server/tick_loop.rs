@@ -1,9 +1,9 @@
-use std::process::exit;
 use std::thread;
 use std::time::Duration;
 
-use log::{debug, error};
+use log::{debug, trace};
 
+use crate::server::exit_with_err::exit_with_err;
 use crate::server::Server;
 
 pub struct TickLoop<'a> {
@@ -19,8 +19,7 @@ impl<'a> TickLoop<'a> {
         let auto_save_interval = server.get_config().get_auto_save_interval();
 
         if tick_rate == 0 || tick_rate > 1000 {
-            error!("Error starting server: Tick rate must be between 1 and 1000");
-            exit(1);
+            exit_with_err("Error starting server: Tick rate must be between 1 and 1000");
         }
 
         Self {
@@ -39,6 +38,7 @@ impl<'a> TickLoop<'a> {
             let avg_tps = rolling_avg.get_average();
             self.server.set_tps(avg_tps);
 
+            // todo: add catchup
             thread::sleep(Duration::from_millis((1000 / self.tick_rate) as u64));
         }
     }
